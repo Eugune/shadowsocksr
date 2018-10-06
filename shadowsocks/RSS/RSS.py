@@ -11,10 +11,22 @@ def get_data(url):
         data = str(res.read(),encoding="utf-8")
         return data
 
-data=get_data(url)
-ssr_str=ssr_decode.decode(data)
+#解码订阅内容获得配置保存在目录config
+def save_config(url):
 
-code = re.findall("ssr://(\w+)", ssr_str)
-print(code[0])
-first = ssr_decode.Analyze(code[15])
-print(first)
+    data=get_data(url)
+    ssr_str=ssr_decode.decode(data)
+
+    code_list = re.findall("ssr://(\w+)", ssr_str)
+
+    for code in code_list:
+        index = code_list.index(code)
+        try:
+            ssr_decode.save_as_json(code,name=str(index))
+        except UnicodeDecodeError:
+            print(ssr_decode.decode(code))  #打印有误的链接
+
+if __name__ == '__main__':
+    url = input("ssr subscrible link:")
+    save_config(url)
+    print("successful!")
