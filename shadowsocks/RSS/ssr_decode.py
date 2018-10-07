@@ -6,7 +6,9 @@ ssr = "ssr://"
 code = ssr[6:]
 name = 'config'
 
-#解析我们的ssr code 返回一个有config,group,remarks组成的列表,其中config为dict，其余两个为string
+#功能：解析我们的ssr code 返回一个有config,group,remarks组成的列表,
+#参数：s为去掉了前缀'ssr://'的ssr链接code，类型为string
+#返回：[config,group,remarks],其中config，类型为dict；group和remarks，类型为string
 def Analyze(s):
 
     config = {
@@ -62,8 +64,10 @@ def Analyze(s):
     config['obfs_param'] = obfs_param
     
     return [config,group,remarks]
-    
-#因为base64解码的永远是4的倍数所以我们需要在最后添加'='构成四的倍数完成解码
+
+#功能：Base64解码(针对url)    
+#参数：待解码的字符串s，类型为string
+#返回：解码后的内容，类型为string
 def decode(s):
 
     count = len(s)
@@ -77,6 +81,8 @@ def decode(s):
     s = str(s,encoding="utf-8")
     return s
 
+#功能：解析ssr并保存在config目录下
+#参数：d为去掉'ssr://'前缀，name为保存的config的名字默认为conf
 def save_as_json(d,name='conf'):
     
     [data_dict,group,remarks] = Analyze(d)
@@ -84,9 +90,13 @@ def save_as_json(d,name='conf'):
     with open('config/'+name+'.json','w') as f:
         json.dump(data_dict, f)
 
+#从终端输入ssr链接，将解析后的配置保存到目录config下
 if __name__ == "__main__":
     ssr = input('ssr link:')
     code = ssr[6:]
     name = input('config name:')
-    save_as_json(code,name)
-
+    try:
+        save_as_json(code,name)
+        print("Successful:please check config at \'config/\'")
+    except:
+        print("Error:Fail to save config!")
